@@ -11,15 +11,14 @@ const Whiteboard = () => {
     const [text, setText] = useState(""); // For text input
     const [isAddingText, setIsAddingText] = useState(false);
 
-    const [history, setHistory] = useState([]); // Stack for undo/redo
-    const [currentStep, setCurrentStep] = useState(-1); // Keeps track of the current step
+    const [history, setHistory] = useState([]);
+    const [currentStep, setCurrentStep] = useState(-1);
 
-    // Initialize Canvas
     useEffect(() => {
         const initializeCanvas = () => {
             const canvas = canvasRef.current;
-            canvas.width = window.innerWidth * 0.9;
-            canvas.height = window.innerHeight * 0.9;
+            canvas.width = window.innerWidth; // Use window.innerWidth for full width
+            canvas.height = window.innerHeight; // Use window.innerHeight for full height
             canvas.style.border = "2px solid #000";
             const ctx = canvas.getContext("2d");
             ctx.lineCap = "round";
@@ -36,8 +35,8 @@ const Whiteboard = () => {
 
     const saveState = () => {
         const canvas = canvasRef.current;
-        const dataUrl = canvas.toDataURL(); // Save canvas state as a data URL
-        const newHistory = history.slice(0, currentStep + 1); // Trim redo stack
+        const dataUrl = canvas.toDataURL();
+        const newHistory = history.slice(0, currentStep + 1);
         setHistory([...newHistory, dataUrl]);
         setCurrentStep(currentStep + 1);
     };
@@ -78,8 +77,7 @@ const Whiteboard = () => {
                 ctx.strokeRect(startPos.x, startPos.y, width, height);
             } else if (tool === "circle") {
                 const radius = Math.sqrt(
-                    Math.pow(offsetX - startPos.x, 2) +
-                    Math.pow(offsetY - startPos.y, 2)
+                    Math.pow(offsetX - startPos.x, 2) + Math.pow(offsetY - startPos.y, 2)
                 );
                 ctx.beginPath();
                 ctx.arc(startPos.x, startPos.y, radius, 0, Math.PI * 2);
@@ -103,8 +101,7 @@ const Whiteboard = () => {
             ctx.fillRect(startPos.x, startPos.y, width, height);
         } else if (tool === "circle") {
             const radius = Math.sqrt(
-                Math.pow(offsetX - startPos.x, 2) +
-                Math.pow(offsetY - startPos.y, 2)
+                Math.pow(offsetX - startPos.x, 2) + Math.pow(offsetY - startPos.y, 2)
             );
             ctx.beginPath();
             ctx.arc(startPos.x, startPos.y, radius, 0, Math.PI * 2);
@@ -138,11 +135,9 @@ const Whiteboard = () => {
             const previousState = history[currentStep - 1];
             const img = new Image();
             img.src = previousState;
-            img.onload = () => ctx.drawImage(img, 0, 0); // Load the previous state onto the canvas
+            img.onload = () => ctx.drawImage(img, 0, 0);
         }
     };
-
-    // Redo Operation
     const redo = () => {
         if (currentStep < history.length - 1) {
             setCurrentStep(currentStep + 1);
@@ -150,7 +145,7 @@ const Whiteboard = () => {
             const nextState = history[currentStep + 1];
             const img = new Image();
             img.src = nextState;
-            img.onload = () => ctx.drawImage(img, 0, 0); // Load the next state onto the canvas
+            img.onload = () => ctx.drawImage(img, 0, 0); 
         }
     };
 
@@ -158,8 +153,8 @@ const Whiteboard = () => {
     const clearCanvas = () => {
         const canvas = canvasRef.current;
         ctxRef.current.clearRect(0, 0, canvas.width, canvas.height);
-        setHistory([]); // Clear history
-        setCurrentStep(-1); // Reset current step
+        setHistory([]); 
+        setCurrentStep(-1);
     };
 
     // Export as Image
@@ -173,7 +168,7 @@ const Whiteboard = () => {
 
     return (
         <div>
-            <div style={{ marginBottom: "10px" }}>
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3 items-center justify-center" style={{ marginBottom: "10px" }}>
                 <button onClick={() => setTool("pen")}>Pen</button>
                 <button onClick={() => setTool("rectangle")}>Rectangle</button>
                 <button onClick={() => setTool("circle")}>Circle</button>
@@ -218,6 +213,5 @@ const Whiteboard = () => {
             />
         </div>
     );
-};
-
-export default Whiteboard;
+}
+export default Whiteboard
